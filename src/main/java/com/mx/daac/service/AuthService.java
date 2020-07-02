@@ -1,6 +1,7 @@
 package com.mx.daac.service;
 
 import com.mx.daac.dto.RegisterRequest;
+import com.mx.daac.exceptions.SpringRedditException;
 import com.mx.daac.model.NotificationEmail;
 import com.mx.daac.model.Users;
 import com.mx.daac.model.VerificationToken;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -46,10 +48,24 @@ public class AuthService {
     private String generateVerificationToken(Users users) {
         String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken();
+        verificationToken.setToken(token);
         verificationToken.setUser(users);
 
         verificationTokenRepository.save(verificationToken);
         return token;
     }
 
+    public void verifyAccount(String token) {
+        Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
+        verificationToken.orElseThrow(() -> new SpringRedditException("Invalid token"));
+        fetchUserAndEnable(verificationToken.get());
+    }
+
+    @Transactional
+    private void fetchUserAndEnable(VerificationToken verificationToken) {
+        String username = verificationToken.getUser().getUsername();
+        Users users = userRepository.findByUsername(username).orElseThrow(() -> new SpringRedditException("User not found with name -" + username));
+        users.setEnabled(true);
+        userRepository.save(users);
+    }
 }
