@@ -17,14 +17,14 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class User {
+public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
     @NotBlank(message = "Username is required")
-    private String userName;
+    private String username;
 
     @NotBlank(message = "Password is required")
     private String password;
