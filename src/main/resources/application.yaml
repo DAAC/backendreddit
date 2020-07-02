@@ -14,3 +14,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+####mail properties####
+  mail:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: 3b2f0977d7d477
+    password: 3ebf1fbcfcf4d5
+    protocol: smtp
