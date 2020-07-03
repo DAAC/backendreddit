@@ -1,4 +1,4 @@
-package com.mx.daac.service;
+package com.mx.daac.security;
 
 import com.mx.daac.exceptions.SpringRedditException;
 import io.jsonwebtoken.Jwts;

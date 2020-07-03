@@ -9,6 +9,7 @@ import com.mx.daac.model.Users;
 import com.mx.daac.model.VerificationToken;
 import com.mx.daac.repository.UserRepository;
 import com.mx.daac.repository.VerificationTokenRepository;
+import com.mx.daac.security.JwtProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
