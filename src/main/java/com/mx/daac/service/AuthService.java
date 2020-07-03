@@ -1,13 +1,19 @@
 package com.mx.daac.service;
 
+import com.mx.daac.dto.AuthenticationResponse;
 import com.mx.daac.dto.RegisterRequest;
 import com.mx.daac.exceptions.SpringRedditException;
+import com.mx.daac.dto.LoginRequest;
 import com.mx.daac.model.NotificationEmail;
 import com.mx.daac.model.Users;
 import com.mx.daac.model.VerificationToken;
 import com.mx.daac.repository.UserRepository;
 import com.mx.daac.repository.VerificationTokenRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +30,11 @@ public class AuthService {
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailService mailService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
     @Transactional
-    public void signUp(RegisterRequest registerRequest){
+    public void signUp(RegisterRequest registerRequest) {
         Users users = new Users();
         users.setUsername(registerRequest.getUsername());
         users.setEmail(registerRequest.getEmail());
@@ -64,8 +72,18 @@ public class AuthService {
     @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken) {
         String username = verificationToken.getUser().getUsername();
-        Users users = userRepository.findByUsername(username).orElseThrow(() -> new SpringRedditException("User not found with name -" + username));
+        Users users = userRepository.findByUsername(username)
+                .orElseThrow(() -> new SpringRedditException("User not found with name -" + username));
         users.setEnabled(true);
         userRepository.save(users);
+    }
+
+    public AuthenticationResponse login(LoginRequest loginRequest) {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginRequest.getUsername(), loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String token = jwtProvider.generateToken(authenticate);
+        return new AuthenticationResponse(token,loginRequest.getUsername());
+
     }
 }
