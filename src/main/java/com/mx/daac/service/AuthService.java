@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,5 +87,12 @@ public class AuthService {
         String token = jwtProvider.generateToken(authenticate);
         return new AuthenticationResponse(token,loginRequest.getUsername());
 
+    }
+
+    public Users getCurrentUser() {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       return userRepository.findByUsername(principal.getUsername())
+                .orElseThrow(() ->
+                        new SpringRedditException("User not found with name - " + principal.getUsername()));
     }
 }
