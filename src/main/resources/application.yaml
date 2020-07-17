@@ -8,7 +8,7 @@ spring:
     initialize: true
   jpa:
     database: POSTGRESQL
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: update
     properties:
