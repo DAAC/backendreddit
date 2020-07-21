@@ -1,41 +1,38 @@
 package com.mx.daac.controller;
 
 import com.mx.daac.dto.CommentsDto;
-import com.mx.daac.service.CommentsService;
+import com.mx.daac.service.CommentService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@AllArgsConstructor
-@RestController
-@RequestMapping("/api/comments")
-public class CommentsController {
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
-    private final CommentsService commentsService;
+@RestController
+@RequestMapping("/api/comments/")
+@AllArgsConstructor
+public class CommentsController {
+    private final CommentService commentService;
 
     @PostMapping
     public ResponseEntity<Void> createComment(@RequestBody CommentsDto commentsDto) {
-        commentsService.save(commentsDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-
+        commentService.save(commentsDto);
+        return new ResponseEntity<>(CREATED);
     }
 
-    @GetMapping("/by-postId/{postId}")
+    @GetMapping("/by-post/{postId}")
     public ResponseEntity<List<CommentsDto>> getAllCommentsForPost(@PathVariable Long postId) {
-       return ResponseEntity.status(HttpStatus.OK)
-               .body(commentsService.getAllCommentsForPost(postId));
+        return ResponseEntity.status(OK)
+                .body(commentService.getAllCommentsForPost(postId));
     }
 
     @GetMapping("/by-user/{userName}")
-    public ResponseEntity<List<CommentsDto>> getAllCommentsByUsername(@PathVariable String userName) {
-       return ResponseEntity.status(HttpStatus.OK)
-                .body(commentsService.getAllCommentsByUsername(userName));
-
-
+    public ResponseEntity<List<CommentsDto>> getAllCommentsForUser(@PathVariable String userName){
+        return ResponseEntity.status(OK)
+                .body(commentService.getAllCommentsForUser(userName));
     }
-
 
 }
