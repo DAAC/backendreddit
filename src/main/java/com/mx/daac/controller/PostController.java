@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@AllArgsConstructor
+import static org.springframework.http.ResponseEntity.status;
+
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api/posts/")
+@AllArgsConstructor
 public class PostController {
 
     private final PostService postService;
@@ -20,29 +22,26 @@ public class PostController {
     @PostMapping
     public ResponseEntity<Void> createPost(@RequestBody PostRequest postRequest) {
         postService.save(postRequest);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PostResponse>> getAllPosts() {
+        return status(HttpStatus.OK).body(postService.getAllPosts());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PostResponse> getPost(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(postService.getPost(id));
+        return status(HttpStatus.OK).body(postService.getPost(id));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<PostResponse>> getAllPosts() {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(postService.getAllPosts());
-    }
-
-    @GetMapping("/by-subreddit/{id}")
+    @GetMapping("by-subreddit/{id}")
     public ResponseEntity<List<PostResponse>> getPostsBySubreddit(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(postService.getPostsBySubreddit(id));
+        return status(HttpStatus.OK).body(postService.getPostsBySubreddit(id));
     }
 
-    @GetMapping("/by-user/{name}")
-    public ResponseEntity<List<PostResponse>> getPostsByUsername(@PathVariable(name = "name") String username) {
-        return ResponseEntity.status(HttpStatus.OK).body(postService.getPostsByUsername(username));
+    @GetMapping("by-user/{name}")
+    public ResponseEntity<List<PostResponse>> getPostsByUsername(@PathVariable String name) {
+        return status(HttpStatus.OK).body(postService.getPostsByUsername(name));
     }
-
 }
