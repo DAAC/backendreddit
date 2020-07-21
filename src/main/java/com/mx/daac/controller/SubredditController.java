@@ -16,28 +16,25 @@ import java.util.List;
 @Slf4j
 public class SubredditController {
 
-
     private final SubredditService subredditService;
 
     @PostMapping
-    public ResponseEntity<SubredditDto> createSubreddit(@RequestBody SubredditDto subredditDto){
-       return ResponseEntity.status(HttpStatus.CREATED)
+    public ResponseEntity<SubredditDto> createSubreddit(@RequestBody SubredditDto subredditDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(subredditService.save(subredditDto));
-
     }
 
     @GetMapping
-    public ResponseEntity<List<SubredditDto>> getAllSubreddits(){
-        return ResponseEntity.status(HttpStatus.OK)
-        .body(subredditService.getAll());
+    public ResponseEntity<List<SubredditDto>> getAllSubreddits() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(subredditService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SubredditDto> getSubreddit(@PathVariable Long id){
+    public ResponseEntity<SubredditDto> getSubreddit(@PathVariable Long id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(subredditService.getSubreddit(id));
-
     }
-
 }
